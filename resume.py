@@ -107,8 +107,9 @@ class Basics:
 
     def load_dict(self, dictionary):
         for name in self.__dict__:
-            if len(dictionary[name]) > 0:
-                self.__dict__[name] = dictionary[name]
+            if name in dictionary.keys():
+                if len(dictionary[name]) > 0:
+                    self.__dict__[name] = dictionary[name]
         if self.picture.startswith("http://") or self.picture.startswith("https://"):
             req = Request(
                 self.picture,
@@ -116,6 +117,9 @@ class Basics:
             with open("profile.jpg", "wb") as output_file:
                 output_file.write(urlopen(req).read())
             self.picture = 'profile.jpg'
+        if self.__dict__['website'] == "":
+            if 'url' in dictionary.keys():
+                self.__dict__['website'] = dictionary['url']
         return self
 
     def __str__(self):

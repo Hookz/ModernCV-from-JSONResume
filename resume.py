@@ -48,8 +48,12 @@ class Resume:
                 self.education = Section(title="Education", content=data['education'],
                                          tags=[['studyType', 'area'], 'institution', None, None, None])
             if 'work' in data.keys():
-                self.work = Section(title="Experience", content=data['work'],
+                if 'company' in data['work'][0].keys():
+                    self.work = Section(title="Experience", content=data['work'],
                                     tags=['position', 'company', None, None, 'summary'])
+                else:
+                    self.work = Section(title="Experience", content=data['work'],
+                                    tags=['position', 'name', None, None, 'summary'])
             if 'volunteer' in data.keys():
                 self.volunteer = Subsection(title="Volunteer", content=data['volunteer'],
                                             tags=['position', 'organization', None, None, 'summary'])

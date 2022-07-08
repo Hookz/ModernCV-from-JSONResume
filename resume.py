@@ -1,5 +1,6 @@
 import json
 from urllib.request import Request, urlopen
+from datetime import datetime
 
 
 def tag_processor(tag, element):
@@ -19,7 +20,7 @@ def tag_processor(tag, element):
 
 class Resume:
     def __init__(self, style="fancy", color="green", fontsize="11pt", papersize="a4paper",
-                 font="sans", basics=None, work=None, volunteer=None, education=None, awards=None, publications=None,
+                 font="sans", basics=None, work=None, volunteer=None, education=None, projects=None, certificates=None, awards=None, publications=None,
                  skills=None, languages=None, interests=None, references=None):
         self.documentclass = [fontsize, papersize, font]
         self.style = style
@@ -28,6 +29,8 @@ class Resume:
         self.work = work
         self.volunteer = volunteer
         self.education = education
+        self.projects = projects
+        self.certificates = certificates
         self.awards = awards
         self.publications = publications
         self.skills = skills
@@ -44,19 +47,23 @@ class Resume:
             data['skills'] = [{'level': k, 'entries': v} for k, v in new_skills.items()]
             if 'basics' in data.keys():
                 self.basics = Basics().load_dict(data['basics'])
-            if 'education' in data.keys():
-                self.education = Section(title="Education", content=data['education'],
-                                         tags=[['studyType', 'area'], 'institution', None, None, None])
             if 'work' in data.keys():
                 if 'company' in data['work'][0].keys():
                     self.work = Section(title="Experience", content=data['work'],
                                     tags=['position', 'company', None, None, 'summary'])
                 else:
-                    self.work = Section(title="Experience", content=data['work'],
-                                    tags=['position', 'name', None, None, 'summary'])
+                    self.work = Work(data['work'])
             if 'volunteer' in data.keys():
                 self.volunteer = Subsection(title="Volunteer", content=data['volunteer'],
                                             tags=['position', 'organization', None, None, 'summary'])
+            if 'education' in data.keys():
+                self.education = Section(title="Education", content=data['education'],
+                                         tags=[['studyType', 'area'], 'institution', None, None, None])
+            if 'projects' in data.keys():
+                self.projects = Section(title="Projects", content=data['projects'],
+                                         tags=['name', 'entity', None, None, 'description'])
+            if 'certificates' in data.keys():
+                self.certificates = Certificates(data['certificates'])
             if 'languages' in data.keys():
                 self.languages = Languages(data['languages'])
             if 'skills' in data.keys():
@@ -79,9 +86,11 @@ class Resume:
                  f"\\usepackage[scale=0.9]{{geometry}}\n\\recomputelengths\n\n"
         output += str(self.basics)
         output += "\\begin{document}\n\\maketitle"
-        output += str(self.education)
         output += str(self.work)
         output += str(self.volunteer)
+        output += str(self.education)
+        output += str(self.projects)
+        output += str(self.certificates)
         output += str(self.languages)
         output += str(self.skills)
         output += str(self.awards)
@@ -123,6 +132,9 @@ class Basics:
         return self
 
     def __str__(self):
+        for address_part in ["address", "postalCode", "city"]:
+            if address_part not in self.location.keys():
+                self.location[address_part] = ""
         output = f"\\firstname{{{self.name.split(' ')[0]}}}\n\\familyname{{{self.name.split(' ')[1]}}}\n" \
                  f"\\title{{Resum\\'e}}\n" \
                  f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n" \
@@ -185,6 +197,20 @@ class References:
     """To be implemented"""
 
 
+class Certificates:
+    def __init__(self, content: list = None):
+        self.content = content
+
+    def __str__(self):
+        output = "\n\\section{Certificates}\n"
+        for certificate in self.content:
+            output += f"\\cventry{{{datetime.strptime(certificate['date'], '%Y-%m-%d').strftime('%b %Y')}}}"
+            output += "{\href" + f"{{{certificate['url']}}}{{{certificate['name']}}}}}{{{certificate['issuer']}}}"
+            output += "{}{}{}\n"
+        output += "\n"
+        return output
+
+
 class Section:
     def __init__(self, title: str = None, language: bool = False, content: list = None, tags: list = None,
                  subsection: bool = False, subsections: list = None):
@@ -211,11 +237,11 @@ class Section:
             else:
                 for element in self.content:
                     if 'startDate' in element.keys():
-                        output += f"\\cventry{{{element['startDate'].split('-')[0]}-"
-                        if element['endDate'] == "":
+                        output += f"\\cventry{{{datetime.strptime(element['startDate'], '%Y-%m-%d').strftime('%b %Y')}-"
+                        if 'endDate' not in element.keys() or element['endDate'] == "":
                             output += "current}"
                         else:
-                            output += element['endDate'].split('-')[0]+'}'
+                            output += datetime.strptime(element['endDate'], '%Y-%m-%d').strftime('%b %Y')+'}'
                     else:
                         output += "\\cventry{}"
                     for tag in self.tags:
@@ -239,3 +265,38 @@ class Languages(Section):
 class Subsection(Section):
     def __init__(self, title: str = None, language: bool = False, content: list = None, tags: list = None):
         super().__init__(title, language, content, tags, True)
+
+
+class Work(Section):
+    def __init__(self, content: list = None):
+        super().__init__(title="Experience", content=content, tags=['position', 'name', None, None, 'summary'])
+
+    def __str__(self):
+        if self.subsection:
+
+            output = f"\\subsection{{{self.title}}}\n"
+        else:
+            output = f"\n\n\\section{{{self.title}}}\n"
+        if self.content is not None:
+            for element in self.content:
+                if 'startDate' in element.keys():
+                    output += f"\\cventry{{{datetime.strptime(element['startDate'], '%Y-%m-%d').strftime('%b %Y')}-"
+                    if 'endDate' not in element.keys() or element['endDate'] == "":
+                        output += "current}"
+                    else:
+                        output += datetime.strptime(element['endDate'], '%Y-%m-%d').strftime('%b %Y')+'}'
+                else:
+                    output += "\\cventry{}"
+                output += f"{{{element['position']}}}{{{element['name']}}}{{}}{{}}{{{element['summary']}"
+                if 'highlights' in element.keys():
+                    output += "\n%\n%\n\\begin{itemize}"
+                    for highlight in element['highlights']:
+                        output += "\\item " + highlight + "\n"
+                    output += "\\end{itemize}\n%\n}\n"
+                else:
+                    output += "}\n"
+
+        if type(self.subsections) is list:
+            for subsection in self.subsections:
+                output += str(subsection)
+        return output

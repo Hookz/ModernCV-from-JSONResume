@@ -28,15 +28,15 @@ To customize the output, edit the [main.py](main.py) file.
 
 Available customizations are: *(default values in **bold**)*
 
-|   Color   |   Font   |   Font size   |   Paper size   |   Style   |
-| :-------: | :------: | :-----------: | :------------: | :-------: |
-| blue      | roman    | 10pt          | **a4paper**    | **fancy** |
-| **green** | **sans** | **11pt**      | a5paper        | classic   |
-| red       |          | 12pt          | b5paper        | casual    |
-| orange    |          |               | letterpaper    |           |
-| grey      |          |               | legalpaper     |           |
-|           |          |               | executive-paper|           |
-|           |          |               | landscape      |           |
+|  Color  |  Font  |  Font size  |  Paper size  |  Style  |
+|:-------:|:------:|:-----------:|:------------:|:-------:|
+|blue     |roman   |10pt         |**a4paper**   |**fancy**|
+|**green**|**sans**|**11pt**     |a5paper       |classic  |
+|red      |        |12pt         |b5paper       |casual   |
+|orange   |        |             |letterpaper   |         |
+|grey     |        |             |legalpaper    |         |
+|         |        |             |executive-paper|        |
+|         |        |             |landscape     |         |
 ### Customization examples
 
 To override default values, run [main.py](main.py) with arguments for which you want non-default values, eg.,

@@ -135,11 +135,13 @@ class Basics:
         for address_part in ["address", "postalCode", "city"]:
             if address_part not in self.location.keys():
                 self.location[address_part] = ""
-        output = f"\\firstname{{{self.name.split(' ')[0]}}}\n\\familyname{{{self.name.split(' ')[1]}}}\n" \
-                 f"\\title{{Resum\\'e}}\n" \
-                 f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n" \
-                 f"\\mobile{{{self.phone}}}\n\\email{{{self.email}}}\n" \
-                 f"\\photo[64pt]{{{self.picture}}}\n"
+        output = (
+            f"\\firstname{{{self.name.split(' ')[0]}}}\n\\familyname{{{self.name.split(' ')[1]}}}\n"
+            f"\\title{{Resum\\'e}}\n"
+            f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n"
+            f"\\mobile{{{self.phone}}}\n\\email{{{self.email}}}\n"
+            + (f"\\photo[64pt]{{{self.picture}}}\n" if self.picture else "")
+        )
         for profile in self.profiles:
             output += f"\\social[{profile['network'].lower()}]{{{profile['username']}}}\n"
 

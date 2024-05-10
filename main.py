@@ -21,7 +21,7 @@ parser.add_argument(
     type=str,
     help="Style of the resume",
     default="fancy",
-    choices=['fancy', 'classic', 'casual']
+    choices=["fancy", "classic", "casual", "banking"],
 )
 parser.add_argument(
     "--font",

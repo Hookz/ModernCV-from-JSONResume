@@ -264,7 +264,14 @@ class Section:
                         if 'endDate' not in element.keys() or element['endDate'] == "":
                             output += "current}"
                         else:
-                            output += datetime.strptime(element['endDate'], '%Y-%m-%d').strftime('%b %Y')+'}'
+                            output += (
+                                datetime.strptime(
+                                    element["endDate"], "%Y-%m-%d"
+                                ).strftime("%b %Y")
+                                + "}"
+                            )
+                    elif "releaseDate" in element.keys():
+                        output += f"\\cventry{{{datetime.strptime(element['releaseDate'], '%Y-%m-%d').strftime('%b %Y')}}}"
                     else:
                         output += "\\cventry{}"
                     for tag in self.tags:

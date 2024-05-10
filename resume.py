@@ -162,6 +162,7 @@ class Basics:
             f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n"
             f"\\mobile{{{self.phone}}}\n\\email{{{self.email}}}\n"
             + (f"\\photo[64pt]{{{self.picture}}}\n" if self.picture else "")
+            + f"\\quote{{{self.summary}}}"
         )
         for profile in self.profiles:
             output += f"\\social[{profile['network'].lower()}]{{{profile['username']}}}\n"

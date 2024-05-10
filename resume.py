@@ -52,29 +52,47 @@ class Resume:
                     self.work = Section(title="Experience", content=data['work'],
                                     tags=['position', 'company', None, None, 'summary'])
                 else:
-                    self.work = Work(data['work'])
-            if 'volunteer' in data.keys():
-                self.volunteer = Subsection(title="Volunteer", content=data['volunteer'],
-                                            tags=['position', 'organization', None, None, 'summary'])
-            if 'education' in data.keys():
-                self.education = Section(title="Education", content=data['education'],
-                                         tags=[['studyType', 'area'], 'institution', None, None, None])
-            if 'projects' in data.keys():
-                self.projects = Section(title="Projects", content=data['projects'],
-                                         tags=['name', 'entity', None, None, 'description'])
-            if 'certificates' in data.keys():
-                self.certificates = Certificates(data['certificates'])
-            if 'languages' in data.keys():
-                self.languages = Languages(data['languages'])
-            if 'skills' in data.keys():
-                self.skills = Skills(data['skills'])
-            if 'awards' in data.keys():
-                self.awards = Awards(data['awards'])
-            if 'interests' in data.keys():
-                self.interests = Interests(data['interests'])
-            if 'references' in data.keys():
-                self.references = Section(title="References", content=data['references'],
-                                          tags=['name', None, None, None, 'reference'])
+                    self.work = Work(data["work"])
+            if "volunteer" in data.keys():
+                self.volunteer = Subsection(
+                    title="Volunteer",
+                    content=data["volunteer"],
+                    tags=["position", "organization", None, None, "summary"],
+                )
+            if "education" in data.keys():
+                self.education = Section(
+                    title="Education",
+                    content=data["education"],
+                    tags=[["studyType", "area"], "institution", None, None, None],
+                )
+            if "publications" in data.keys():
+                self.publications = Section(
+                    title="Publications",
+                    content=data["publications"],
+                    tags=["name", "publisher", None, None, "summary"],
+                )
+            if "projects" in data.keys():
+                self.projects = Section(
+                    title="Projects",
+                    content=data["projects"],
+                    tags=["name", "entity", None, None, "description"],
+                )
+            if "certificates" in data.keys():
+                self.certificates = Certificates(data["certificates"])
+            if "languages" in data.keys():
+                self.languages = Languages(data["languages"])
+            if "skills" in data.keys():
+                self.skills = Skills(data["skills"])
+            if "awards" in data.keys():
+                self.awards = Awards(data["awards"])
+            if "interests" in data.keys():
+                self.interests = Interests(data["interests"])
+            if "references" in data.keys():
+                self.references = Section(
+                    title="References",
+                    content=data["references"],
+                    tags=["name", None, None, None, "reference"],
+                )
             for param in self.__dict__:
                 if self.__dict__[param] is None:
                     self.__dict__[param] = ""

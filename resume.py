@@ -99,9 +99,12 @@ class Resume:
         return self
 
     def __str__(self):
-        output = f"\\documentclass[{','.join(self.documentclass)}]{{moderncv}}\n\\moderncvstyle{{{self.style}}}\n" \
-                 f"\\moderncvcolor{{{self.color}}}\n\\usepackage[utf8]{{inputenc}}\n" \
-                 f"\\usepackage[scale=0.9]{{geometry}}\n\\recomputelengths\n\n"
+        output = (
+            f"\\documentclass[{','.join(self.documentclass)}]{{moderncv}}\n\\moderncvstyle{{{self.style}}}\n"
+            f"\\moderncvcolor{{{self.color}}}\n\\usepackage[utf8x]{{inputenc}}\n"
+            f"\\usepackage[scale=0.9]{{geometry}}\n\\recomputelengths\n\n"
+            f"\\usepackage{{textgreek}}"
+        )
         output += str(self.basics)
         output += "\\begin{document}\n\\maketitle"
         output += str(self.work)

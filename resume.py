@@ -245,6 +245,13 @@ class Section:
         self.subsection = subsection
         self.subsections = subsections
 
+        # Set the url
+        for element in self.content:
+            if "url" in element and "name" in element:
+                element["name"] = (
+                    f"\\href{{ {element['url']} }}{{{element['name']} \\faExternalLink*}}"
+                )
+
     def __str__(self):
         if self.subsection:
 

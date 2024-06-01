@@ -9,7 +9,11 @@ def tag_processor(tag, element):
         if type(tag) is list:
             output += "{"
             for subtag in tag:
-                output += f"{element[subtag]}, "
+                if subtag == "score":
+                    if subtag in element and element[subtag]:
+                        output += f"Score: {element[subtag]}, "
+                elif element[subtag]:
+                    output += f"{element[subtag]}, "
             output = output[:-2] + "}"
         else:
             output += f"{{{element[tag]}}}"
@@ -63,7 +67,7 @@ class Resume:
                 self.education = Section(
                     title="Education",
                     content=data["education"],
-                    tags=[["studyType", "area"], "institution", None, None, None],
+                    tags=[["studyType", "area", "score"], "institution", None, None, None],
                 )
             if "publications" in data.keys():
                 self.publications = Section(

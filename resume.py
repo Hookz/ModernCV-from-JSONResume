@@ -11,7 +11,7 @@ def tag_processor(tag, element):
             for subtag in tag:
                 if subtag == "score":
                     if subtag in element and element[subtag]:
-                        output += f"Score: {element[subtag]}, "
+                        output += f"Grade: {element[subtag]}, "
                 elif element[subtag]:
                     output += f"{element[subtag]}, "
             output = output[:-2] + "}"

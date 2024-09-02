@@ -79,7 +79,7 @@ class Resume:
                 self.projects = Section(
                     title="Projects",
                     content=data["projects"],
-                    tags=["name", "entity", None, None, "description"],
+                    tags=["name", None, None, None, "description"],
                 )
             if "certificates" in data.keys():
                 self.certificates = Certificates(data["certificates"])

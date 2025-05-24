@@ -213,7 +213,7 @@ class Interests:
     def __str__(self):
         output = "\n\\section{Interests}\n"
         for interest in self.content:
-            output += f"\cvlanguage{{{interest['name']}}}{{"
+            output += f"\\cvlanguage{{{interest['name']}}}{{"
             for keyword in interest['keywords']:
                 output += f"{keyword}, "
             output = output[:-2] + "}{}\n"

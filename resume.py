@@ -9,7 +9,11 @@ def tag_processor(tag, element):
         if type(tag) is list:
             output += "{"
             for subtag in tag:
-                output += f"{element[subtag]}, "
+                if subtag == "score":
+                    if subtag in element and element[subtag]:
+                        output += f"Grade: {element[subtag]}, "
+                elif element[subtag]:
+                    output += f"{element[subtag]}, "
             output = output[:-2] + "}"
         else:
             output += f"{{{element[tag]}}}"
@@ -52,38 +56,59 @@ class Resume:
                     self.work = Section(title="Experience", content=data['work'],
                                     tags=['position', 'company', None, None, 'summary'])
                 else:
-                    self.work = Work(data['work'])
-            if 'volunteer' in data.keys():
-                self.volunteer = Subsection(title="Volunteer", content=data['volunteer'],
-                                            tags=['position', 'organization', None, None, 'summary'])
-            if 'education' in data.keys():
-                self.education = Section(title="Education", content=data['education'],
-                                         tags=[['studyType', 'area'], 'institution', None, None, None])
-            if 'projects' in data.keys():
-                self.projects = Section(title="Projects", content=data['projects'],
-                                         tags=['name', 'entity', None, None, 'description'])
-            if 'certificates' in data.keys():
-                self.certificates = Certificates(data['certificates'])
-            if 'languages' in data.keys():
-                self.languages = Languages(data['languages'])
-            if 'skills' in data.keys():
-                self.skills = Skills(data['skills'])
-            if 'awards' in data.keys():
-                self.awards = Awards(data['awards'])
-            if 'interests' in data.keys():
-                self.interests = Interests(data['interests'])
-            if 'references' in data.keys():
-                self.references = Section(title="References", content=data['references'],
-                                          tags=['name', None, None, None, 'reference'])
+                    self.work = Work(data["work"])
+            if "volunteer" in data.keys():
+                self.volunteer = Subsection(
+                    title="Volunteer",
+                    content=data["volunteer"],
+                    tags=["position", "organization", None, None, "summary"],
+                )
+            if "education" in data.keys():
+                self.education = Section(
+                    title="Education",
+                    content=data["education"],
+                    tags=[["studyType", "area", "score"], "institution", None, None, None],
+                )
+            if "publications" in data.keys():
+                self.publications = Section(
+                    title="Publications",
+                    content=data["publications"],
+                    tags=["name", "publisher", None, None, "summary"],
+                )
+            if "projects" in data.keys():
+                self.projects = Section(
+                    title="Projects",
+                    content=data["projects"],
+                    tags=["name", None, None, None, "description"],
+                )
+            if "certificates" in data.keys():
+                self.certificates = Certificates(data["certificates"])
+            if "languages" in data.keys():
+                self.languages = Languages(data["languages"])
+            if "skills" in data.keys():
+                self.skills = Skills(data["skills"])
+            if "awards" in data.keys():
+                self.awards = Awards(data["awards"])
+            if "interests" in data.keys():
+                self.interests = Interests(data["interests"])
+            if "references" in data.keys():
+                self.references = Section(
+                    title="References",
+                    content=data["references"],
+                    tags=["name", None, None, None, "reference"],
+                )
             for param in self.__dict__:
                 if self.__dict__[param] is None:
                     self.__dict__[param] = ""
         return self
 
     def __str__(self):
-        output = f"\\documentclass[{','.join(self.documentclass)}]{{moderncv}}\n\\moderncvstyle{{{self.style}}}\n" \
-                 f"\\moderncvcolor{{{self.color}}}\n\\usepackage[utf8]{{inputenc}}\n" \
-                 f"\\usepackage[scale=0.9]{{geometry}}\n\\recomputelengths\n\n"
+        output = (
+            f"\\documentclass[{','.join(self.documentclass)}]{{moderncv}}\n\\moderncvstyle{{{self.style}}}\n"
+            f"\\moderncvcolor{{{self.color}}}\n\\usepackage[utf8x]{{inputenc}}\n"
+            f"\\usepackage[scale=0.9]{{geometry}}\n\\recomputelengths\n\n"
+            f"\\usepackage{{textgreek}}"
+        )
         output += str(self.basics)
         output += "\\begin{document}\n\\maketitle"
         output += str(self.work)
@@ -135,11 +160,14 @@ class Basics:
         for address_part in ["address", "postalCode", "city"]:
             if address_part not in self.location.keys():
                 self.location[address_part] = ""
-        output = f"\\firstname{{{self.name.split(' ')[0]}}}\n\\familyname{{{self.name.split(' ')[1]}}}\n" \
-                 f"\\title{{Resum\\'e}}\n" \
-                 f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n" \
-                 f"\\mobile{{{self.phone}}}\n\\email{{{self.email}}}\n" \
-                 f"\\photo[64pt]{{{self.picture}}}\n"
+        output = (
+            f"\\firstname{{{self.name.split(' ')[0]}}}\n\\familyname{{{self.name.split(' ')[1]}}}\n"
+            f"\\title{{Resum\\'e}}\n"
+            f"\\address{{{self.location['address']}}}{{{self.location['postalCode']+' '+self.location['city']}}}\n"
+            f"\\mobile{{{self.phone}}}\n\\email{{{self.email}}}\n"
+            + (f"\\photo[64pt]{{{self.picture}}}\n" if self.picture else "")
+            + f"\\quote{{{self.summary}}}"
+        )
         for profile in self.profiles:
             output += f"\\social[{profile['network'].lower()}]{{{profile['username']}}}\n"
 
@@ -221,6 +249,13 @@ class Section:
         self.subsection = subsection
         self.subsections = subsections
 
+        # Set the url
+        for element in self.content:
+            if "url" in element and "name" in element:
+                element["name"] = (
+                    f"\\href{{ {element['url']} }}{{{element['name']} \\faExternalLink*}}"
+                )
+
     def __str__(self):
         if self.subsection:
 
@@ -241,7 +276,14 @@ class Section:
                         if 'endDate' not in element.keys() or element['endDate'] == "":
                             output += "current}"
                         else:
-                            output += datetime.strptime(element['endDate'], '%Y-%m-%d').strftime('%b %Y')+'}'
+                            output += (
+                                datetime.strptime(
+                                    element["endDate"], "%Y-%m-%d"
+                                ).strftime("%b %Y")
+                                + "}"
+                            )
+                    elif "releaseDate" in element.keys():
+                        output += f"\\cventry{{{datetime.strptime(element['releaseDate'], '%Y-%m-%d').strftime('%b %Y')}}}"
                     else:
                         output += "\\cventry{}"
                     for tag in self.tags:

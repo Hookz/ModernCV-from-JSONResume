@@ -14,14 +14,14 @@ parser.add_argument(
     type=str,
     help="Color scheme of the resume",
     default="green",
-    choices=['blue', 'green', 'red', 'orange', 'grey']
+    choices=["blue", "green", "red", "orange", "grey", "black"],
 )
 parser.add_argument(
     "--style",
     type=str,
     help="Style of the resume",
     default="fancy",
-    choices=['fancy', 'classic', 'casual']
+    choices=["fancy", "classic", "casual", "banking"],
 )
 parser.add_argument(
     "--font",

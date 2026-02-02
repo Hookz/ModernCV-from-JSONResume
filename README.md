@@ -1,4 +1,4 @@
-# ModernCV from JSONResume
+# ModernCV from JSONResume - this repository has moved to Codeberg: [https://codeberg.org/mjarski/ModernCV-from-JSONResume](https://codeberg.org/mjarski/ModernCV-from-JSONResume)
 
 ## About this converter
 This converter allows for generating PDF files using [moderncv](https://github.com/moderncv/moderncv) and 
